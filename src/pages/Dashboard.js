@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useFinanceStore } from "../store/financeStore";
 import { useModuleStore } from "../store/moduleStore";
+import { useAssignmentStore } from "../store/assignmentStore";
 
 const containerStyle = {
   padding: 24,
@@ -18,7 +19,7 @@ const headerStyle = {
 
 const titleStyle = { fontSize: 28, fontWeight: 700 };
 
-const subtitleStyle = { color: "#6b7280" };
+const subtitleStyle = { color: "var(--muted)" };
 
 const gridStyle = {
   display: "grid",
@@ -29,9 +30,9 @@ const gridStyle = {
 
 const cardStyle = {
   padding: "20px",
-  background: "#f9fafb",
+  background: "var(--card-bg)",
   borderRadius: "12px",
-  border: "1px solid #e5e7eb",
+  border: "1px solid var(--surface)",
   boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
 };
 
@@ -60,6 +61,9 @@ export default function Dashboard() {
 
   const moduleCount = modules.length;
 
+  const assignments = useAssignmentStore((s) => s.assignments);
+  const assignmentCount = assignments.length;
+
   const recentTransactions = useMemo(() => {
     return financeData.slice().sort((a, b) => (b.id || 0) - (a.id || 0)).slice(0, 5);
   }, [financeData]);
@@ -74,39 +78,39 @@ export default function Dashboard() {
       </div>
 
       <div style={gridStyle}>
-        <div style={cardStyle}>
+        <div className="card" style={cardStyle}>
           <h4>Total Spent</h4>
           <div style={valueStyle}>£{totalSpent.toFixed(2)}</div>
-          <div style={{ color: "#6b7280", marginTop: 8 }}>All recorded transactions</div>
+          <div style={{ color: "var(--muted)", marginTop: 8 }}>All recorded transactions</div>
         </div>
 
-        <div style={cardStyle}>
+        <div className="card" style={cardStyle}>
           <h4>Modules</h4>
           <div style={valueStyle}>{moduleCount}</div>
-          <div style={{ color: "#6b7280", marginTop: 8 }}>Modules you are tracking</div>
+          <div style={{ color: "var(--muted)", marginTop: 8 }}>Modules you are tracking</div>
         </div>
 
-        <div style={cardStyle}>
+        <div className="card" style={cardStyle}>
           <h4>Transactions</h4>
           <div style={valueStyle}>{totalTransactions}</div>
-          <div style={{ color: "#6b7280", marginTop: 8 }}>Recent activity count</div>
+          <div style={{ color: "var(--muted)", marginTop: 8 }}>Recent activity count</div>
         </div>
 
-        <div style={cardStyle}>
+        <div className="card" style={cardStyle}>
           <h4>Assignments</h4>
-          <div style={valueStyle}>0</div>
-          <div style={{ color: "#6b7280", marginTop: 8 }}>No assignments yet</div>
+          <div style={valueStyle}>{assignmentCount}</div>
+          <div style={{ color: "var(--muted)", marginTop: 8 }}>{assignmentCount === 0 ? "No assignments yet" : "Assignments you're tracking"}</div>
         </div>
       </div>
 
       <div style={panelsStyle}>
-        <div style={{ ...cardStyle }}>
+        <div className="card" style={{ ...cardStyle }}>
           <h4>Recent Transactions</h4>
           {recentTransactions.length === 0 ? (
-            <div style={{ color: "#6b7280", marginTop: 12 }}>No transactions recorded</div>
+            <div style={{ color: "var(--muted)", marginTop: 12 }}>No transactions recorded</div>
           ) : (
             <table style={{ width: "100%", marginTop: 12, borderCollapse: "collapse" }}>
-              <thead style={{ textAlign: "left", color: "#374151" }}>
+              <thead style={{ textAlign: "left", color: "var(--muted)" }}>
                 <tr>
                   <th style={{ padding: "6px 8px" }}>Date</th>
                   <th style={{ padding: "6px 8px" }}>Category</th>
@@ -116,9 +120,9 @@ export default function Dashboard() {
               <tbody>
                 {recentTransactions.map((t) => (
                   <tr key={t.id}>
-                    <td style={{ padding: "8px", borderTop: "1px solid #eef2f6" }}>{t.date}</td>
-                    <td style={{ padding: "8px", borderTop: "1px solid #eef2f6" }}>{t.category}</td>
-                    <td style={{ padding: "8px", borderTop: "1px solid #eef2f6" }}>£{t.amount}</td>
+                    <td style={{ padding: "8px", borderTop: "1px solid var(--surface)" }}>{t.date}</td>
+                    <td style={{ padding: "8px", borderTop: "1px solid var(--surface)" }}>{t.category}</td>
+                    <td style={{ padding: "8px", borderTop: "1px solid var(--surface)" }}>£{t.amount}</td>
                   </tr>
                 ))}
               </tbody>
@@ -126,14 +130,14 @@ export default function Dashboard() {
           )}
         </div>
 
-        <div style={{ ...cardStyle }}>
+        <div className="card" style={{ ...cardStyle }}>
           <h4>Modules</h4>
           {moduleCount === 0 ? (
-            <div style={{ color: "#6b7280", marginTop: 12 }}>You haven't added any modules yet.</div>
+            <div style={{ color: "var(--muted)", marginTop: 12 }}>You haven't added any modules yet.</div>
           ) : (
             <ul style={{ padding: 0, marginTop: 12, listStyle: "none" }}>
               {modules.slice(0, 6).map((m) => (
-                <li key={m.id} style={{ padding: "8px 0", borderBottom: "1px solid #eef2f6" }}>
+                <li key={m.id} style={{ padding: "8px 0", borderBottom: "1px solid var(--surface)" }}>
                   {m.name || m.title || "Module"}
                 </li>
               ))}

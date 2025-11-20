@@ -12,4 +12,14 @@ export const useFinanceStore = create((set) => ({
     set((state) => ({
       financeData: [...state.financeData, { id: Date.now(), ...record }],
     })),
+    updateRecord: (id, updatedRecord) =>
+  set((state) => ({
+    financeData: state.financeData.map((item) =>
+      item.id === id ? { ...item, ...updatedRecord } : item
+    ),
+  })),
+  deleteRecord: (id) =>
+  set((state) => ({
+    financeData: state.financeData.filter((item) => item.id !== id),
+  })),
 }));

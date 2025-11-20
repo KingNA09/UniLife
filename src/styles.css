@@ -1,0 +1,72 @@
+:root {
+  /* Light theme (defaults) */
+  --bg: #F8FAFF;
+  --card-bg: #FFFFFF;
+  --surface: #EEF2FF;
+  --text: #0F172A;
+  --heading: #0b1220;
+  --card-text: #0F172A;
+  --muted: #6B7280;
+  --primary: #4F46E5;
+  --primary-600: #4338CA;
+  --success: #16A34A;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+  --success-surface: #ecfdf5;
+  --danger-surface: #fff1f2;
+  --primary-surface: #eff6ff;
+  --radius: 12px;
+  --shadow: 0 6px 18px rgba(12,18,34,0.06);
+}
+
+html[data-theme="dark"] {
+  --bg: #071022;
+  --card-bg: #F8FAFF;
+  --surface: #EEF2FF;
+  --text: #E6EEF8;
+  --card-text: #0b1220;
+  --heading: #000000;
+  --muted: #9AA6B2;
+  --primary: #8B84FF;
+  --primary-600: #6F63F7;
+  --success: #16A34A;
+  --warning: #F59E0B;
+  --danger: #F87171;
+  --success-surface: #052e16;
+  --danger-surface: #2a0304;
+  --primary-surface: #0b1220;
+}
+
+/* Basic utilities to use the variables */
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.card {
+  background: var(--card-bg);
+  color: var(--card-text);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px;
+}
+
+/* Make headings inside cards more visible; uses --heading so dark mode can be brighter */
+.card h1,
+.card h2,
+.card h3,
+.card h4,
+.card .card-title {
+  color: var(--heading);
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.muted { color: var(--muted); }

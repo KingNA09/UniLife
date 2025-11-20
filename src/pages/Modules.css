@@ -21,13 +21,13 @@
   flex: 1;
   padding: 10px;
   font-size: 16px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--surface);
   border-radius: 8px;
 }
 
 .add-button {
   padding: 10px 16px;
-  background-color: #4f46e5;
+  background-color: var(--primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -37,7 +37,7 @@
 }
 
 .add-button:hover {
-  background-color: #4338ca;
+  background-color: var(--primary-600);
 }
 
 .module-list {
@@ -49,11 +49,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #f9fafb;
+  background: var(--card-bg);
   padding: 15px;
   margin-bottom: 12px;
   border-radius: 10px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--surface);
 }
 
 .module-info {
@@ -61,7 +61,7 @@
 }
 
 .delete-button {
-  background-color: #ef4444;
+  background-color: var(--danger);
   border: none;
   color: white;
   padding: 8px 12px;
@@ -72,5 +72,5 @@
 }
 
 .delete-button:hover {
-  background-color: #dc2626;
+  background-color: var(--danger);
 }
