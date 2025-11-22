@@ -27,7 +27,11 @@ export default function Login() {
   return (
     <div style={styles.container}>
       <div className="card" style={styles.card}>
-        <h1 style={{ marginBottom: "20px" }}>Login</h1>
+        <div style={{ marginBottom: 8 }}>
+          <div style={{ fontSize: 28, fontWeight: 800, color: "var(--primary)", marginBottom: 6 }}>UniLife</div>
+          <div style={{ color: "var(--muted)", fontSize: 13, marginBottom: 14 }}>Smart student planner — finances, modules & assignments</div>
+        </div>
+        <h1 style={{ marginBottom: "12px" }}>Login</h1>
 
         <form onSubmit={handleLogin} style={styles.form}>
           <input
