@@ -1,25 +1,49 @@
 import { create } from "zustand";
 
-export const useFinanceStore = create((set) => ({
-  financeData: [
-    { id: 1, category: "Food", amount: 120, date: "2025-01-05" },
-    { id: 2, category: "Travel", amount: 45, date: "2025-01-08" },
-    { id: 3, category: "Books", amount: 80, date: "2025-01-12" },
-    { id: 4, category: "Gym", amount: 30, date: "2025-01-15" },
-  ],
+const STORAGE_KEY = "unilife_finance";
+
+const defaultData = [];
+
+function loadInitial() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return defaultData;
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) return parsed;
+  } catch (e) {
+    // ignore and fallback
+  }
+  return defaultData;
+}
+
+export const useFinanceStore = create((set, get) => ({
+  financeData: loadInitial(),
 
   addRecord: (record) =>
-    set((state) => ({
-      financeData: [...state.financeData, { id: Date.now(), ...record }],
-    })),
-    updateRecord: (id, updatedRecord) =>
-  set((state) => ({
-    financeData: state.financeData.map((item) =>
-      item.id === id ? { ...item, ...updatedRecord } : item
-    ),
-  })),
+    set((state) => {
+      const next = [...state.financeData, { id: Date.now(), ...record }];
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch (e) {}
+      return { financeData: next };
+    }),
+
+  updateRecord: (id, updatedRecord) =>
+    set((state) => {
+      const next = state.financeData.map((item) =>
+        item.id === id ? { ...item, ...updatedRecord } : item
+      );
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch (e) {}
+      return { financeData: next };
+    }),
+
   deleteRecord: (id) =>
-  set((state) => ({
-    financeData: state.financeData.filter((item) => item.id !== id),
-  })),
+    set((state) => {
+      const next = state.financeData.filter((item) => item.id !== id);
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch (e) {}
+      return { financeData: next };
+    }),
+  resetToDefaults: () =>
+    set(() => {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultData)); } catch (e) {}
+      return { financeData: defaultData };
+    }),
 }));

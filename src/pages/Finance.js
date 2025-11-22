@@ -30,7 +30,7 @@ const inputStyle = {
 };
 
 export default function Finance() {
-  const { financeData = [], addRecord, updateRecord } = useFinanceStore();
+  const { financeData = [], addRecord, updateRecord, resetToDefaults } = useFinanceStore();
 
   // AG Grid api reference for exports and actions
   const [gridApi, setGridApi] = useState(null);
@@ -61,27 +61,24 @@ export default function Finance() {
     setEditDate(record.date);
   };
 
-  const totalSpent = financeData.reduce((sum, item) => sum + item.amount, 0);
+  const totalSpentNum = financeData.reduce((sum, item) => sum + (item.amount || 0), 0);
 
-  const averageSpent =
-    financeData.length > 0 ? (totalSpent / financeData.length).toFixed(2) : 0;
+  const totalSpentDisplay = financeData.length > 0 ? `£${totalSpentNum.toFixed(2)}` : "";
 
-  const highestCategory = (() => {
-    if (financeData.length === 0) return "N/A";
+  const averageSpentDisplay = financeData.length > 0 ? `£${(totalSpentNum / financeData.length).toFixed(2)}` : "";
 
+  const highestCategoryDisplay = (() => {
+    if (financeData.length === 0) return "";
     const categoryTotals = {};
-
     financeData.forEach((item) => {
-      if (!categoryTotals[item.category]) {
-        categoryTotals[item.category] = 0;
-      }
-      categoryTotals[item.category] += item.amount;
+      const cat = item.category || "Unknown";
+      categoryTotals[cat] = (categoryTotals[cat] || 0) + (item.amount || 0);
     });
-
-    return Object.entries(categoryTotals).sort((a, b) => b[1] - a[1])[0][0];
+    const best = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1])[0];
+    return best ? best[0] : "";
   })();
 
-  const totalTransactions = financeData.length;
+  const totalTransactionsDisplay = financeData.length > 0 ? `${financeData.length}` : "";
 
   // Table columns
   const columns = [
@@ -152,10 +149,15 @@ export default function Finance() {
               toast.error("Please fill category, amount and date");
               return;
             }
+            const n = Number(amount);
+            if (Number.isNaN(n) || n <= 0) {
+              toast.error("Amount must be a number greater than 0");
+              return;
+            }
 
             addRecord({
               category,
-              amount: Number(amount),
+              amount: n,
               date,
             });
 
@@ -230,15 +232,21 @@ export default function Finance() {
             onSubmit={(e) => {
               e.preventDefault();
 
-              updateRecord(editingId, {
-                category: editCategory,
-                amount: Number(editAmount),
-                date: editDate,
-              });
+                const n = Number(editAmount);
+                if (Number.isNaN(n) || n <= 0) {
+                  toast.error("Amount must be a number greater than 0");
+                  return;
+                }
 
-              toast.success("Expense updated");
+                updateRecord(editingId, {
+                  category: editCategory,
+                  amount: n,
+                  date: editDate,
+                });
 
-              setEditingId(null);
+                toast.success("Expense updated");
+
+                setEditingId(null);
             }}
             style={{ display: "flex", gap: "15px", flexWrap: "wrap" }}
           >
@@ -313,22 +321,22 @@ export default function Finance() {
       >
         <div className="card" style={cardStyle}>
           <h3>Total Spent</h3>
-          <p style={valueStyle}>£{totalSpent.toFixed(2)}</p>
+          <p style={valueStyle}>{totalSpentDisplay}</p>
         </div>
 
         <div className="card" style={cardStyle}>
           <h3>Average per Purchase</h3>
-          <p style={valueStyle}>£{averageSpent}</p>
+          <p style={valueStyle}>{averageSpentDisplay}</p>
         </div>
 
         <div className="card" style={cardStyle}>
           <h3>Top Category</h3>
-          <p style={valueStyle}>{highestCategory}</p>
+          <p style={valueStyle}>{highestCategoryDisplay}</p>
         </div>
 
         <div className="card" style={cardStyle}>
           <h3>Transactions</h3>
-          <p style={valueStyle}>{totalTransactions}</p>
+          <p style={valueStyle}>{totalTransactionsDisplay}</p>
         </div>
       </div>
 
@@ -340,6 +348,23 @@ export default function Finance() {
         >
           Export CSV
         </button>
+
+        <button
+          onClick={() => {
+            const ok = window.confirm("Reset finance data to defaults? This will overwrite saved purchases.");
+            if (!ok) return;
+            try {
+              resetToDefaults();
+              toast.info("Finance data reset to defaults");
+            } catch (e) {
+              toast.error("Could not reset data");
+            }
+          }}
+          style={{ padding: "8px 12px", borderRadius: 8, background: "var(--danger)", color: "white", border: "none", cursor: "pointer" }}
+        >
+          Reset to defaults
+        </button>
+
         <div style={{ color: "var(--muted)", alignSelf: "center" }}>Rows: {financeData.length}</div>
       </div>
 
